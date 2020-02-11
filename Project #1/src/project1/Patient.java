@@ -8,10 +8,10 @@ public class Patient {
 	private String id;
 	private ArrayList<Double> p;
 	
-	public Patient() {
-		result = "result";
-		prediction = "unknown";
-		id = "not set";
+	public Patient(String r, String pred, String i) {
+		result = r;
+		prediction = pred;
+		id = i;
 		p = new ArrayList<Double>();
 	}
 
