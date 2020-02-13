@@ -3,35 +3,54 @@ package project1;
 import java.util.ArrayList;
 
 public class PatientCollection implements PatientCollectionADT{
-
-	@Override
+	private String file;
+	private ArrayList<Patient> list;
+	
+	public PatientCollection(String fn) {
+		file = fn;
+		list = new ArrayList<Patient>();
+	}
+	
 	public Patient getPatient(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		for(Patient patient: list) { //For each patient in the list check to see
+			if(list.contains(id)) { //if the list contains the id
+				return patient; 
+			}
+		}
+		return null; //returns null if the id is not in the collection
 	}
 
-	@Override
 	public Patient removePatient(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		for (Patient patient : list) { //For each patient in the list check to see if
+			if(list.contains(id)) { //the list contains the id then remove
+				list.remove(patient);
+				return patient;
+			}
+		}
+		return null; //returns null if the id is not in the collection
 	}
 
-	@Override
 	public void setResultForPatient(String id, String result) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
-	@Override
 	public ArrayList<String> getIds() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
-	@Override
+	
 	public String addPatientsFromFile(String fileName) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
+	public void readFile() {
+		
+	}
+	
+	public void writeFile() {
+		
+	}
 }
