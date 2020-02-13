@@ -1,8 +1,10 @@
 package project1;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -78,6 +80,8 @@ public class PatientCollection implements PatientCollectionADT{
 				
 				patient.setP(proteins);
 				
+				list.add(patient);
+				
 			}
 		} catch (Exception e) {
 			System.err.println("there was a problem with the file reader, try different read type.");
@@ -92,17 +96,20 @@ public class PatientCollection implements PatientCollectionADT{
 					String id = tokens[2];
 					Patient patient = new Patient(response,prediction,id);
 					
+					
 					String pr1 = tokens[3697];
 					String pr2 = tokens[3258];
 					double p1 = Double.parseDouble(pr1);
 					double p2 = Double.parseDouble(pr2);
 					
 					ArrayList<Double> proteins = new ArrayList<Double>();
-					
+				
 					proteins.add(p1);
 					proteins.add(p2);
 					
 					patient.setP(proteins);
+					
+					list.add(patient);
 					
 				}			
 			} catch (Exception e2) {
@@ -119,6 +126,22 @@ public class PatientCollection implements PatientCollectionADT{
 	}
 	
 	public void writeFile() {
+		String fn = "test.csv";
 		
+		try {
+			FileWriter fw = new FileWriter(fn);
+			BufferedWriter myOutfile = new BufferedWriter(fw);
+			
+			for (int i = 0; i < list.size(); i++) {
+				myOutfile.write(list.get(i).toString() + ",");
+			}
+			
+			myOutfile.flush();
+			myOutfile.close();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Didn't save to " + fn);
+		}
 	}
 }
