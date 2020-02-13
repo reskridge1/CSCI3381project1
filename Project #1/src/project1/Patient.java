@@ -48,7 +48,7 @@ public class Patient {
 	}
 	
 	public String toString() {
-		return result +" "+ prediction +" "+ id;
+		return result +" "+ prediction +" "+ id +" "+ p;
 		
 	}
 }

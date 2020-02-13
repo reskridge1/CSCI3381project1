@@ -1,14 +1,18 @@
 package project1;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class PatientCollection implements PatientCollectionADT{
-	private String file;
 	private ArrayList<Patient> list;
 	
-	public PatientCollection(String fn) {
-		file = fn;
+	public PatientCollection() {
 		list = new ArrayList<Patient>();
+		readFile("./project1/data.csv");
 	}
 	
 	public Patient getPatient(String id) {
@@ -46,8 +50,72 @@ public class PatientCollection implements PatientCollectionADT{
 		return null;
 	}
 	
-	public void readFile() {
+	private void readFile(String fileName) {
+		BufferedReader lineReader = null;
 		
+		try {
+			FileReader fr = new FileReader(fileName);
+			lineReader = new BufferedReader(fr);
+			String line = null;
+			
+			while((line = lineReader.readLine())!=null) {
+				String[] tokens = line.split(",");
+				
+				String response = tokens[0];
+				String prediction = tokens[1];
+				String id = tokens[2];
+				Patient patient = new Patient(response,prediction,id);
+				
+				String pr1 = tokens[3697];
+				String pr2 = tokens[3258];
+				double p1 = Double.parseDouble(pr1);
+				double p2 = Double.parseDouble(pr2);
+				
+				ArrayList<Double> proteins = new ArrayList<Double>();
+				
+				proteins.add(p1);
+				proteins.add(p2);
+				
+				patient.setP(proteins);
+				
+			}
+		} catch (Exception e) {
+			System.err.println("there was a problem with the file reader, try different read type.");
+			try {
+				lineReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(fileName.substring(1))));
+				String line = null;
+				while((line = lineReader.readLine())!=null) {
+					String[] tokens = line.split(",");
+					
+					String response = tokens[0];
+					String prediction = tokens[1];
+					String id = tokens[2];
+					Patient patient = new Patient(response,prediction,id);
+					
+					String pr1 = tokens[3697];
+					String pr2 = tokens[3258];
+					double p1 = Double.parseDouble(pr1);
+					double p2 = Double.parseDouble(pr2);
+					
+					ArrayList<Double> proteins = new ArrayList<Double>();
+					
+					proteins.add(p1);
+					proteins.add(p2);
+					
+					patient.setP(proteins);
+					
+				}			
+			} catch (Exception e2) {
+				System.err.println("there was a problem with the file reader, try again.  either no such file or format error");
+			} 
+		}finally {
+			if (lineReader != null)
+				try {
+					lineReader.close();
+				} catch (IOException e2) {
+					System.err.println("could not close BufferedReader");
+				}
+		}			
 	}
 	
 	public void writeFile() {
