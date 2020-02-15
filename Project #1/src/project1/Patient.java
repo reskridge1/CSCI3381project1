@@ -8,11 +8,23 @@ public class Patient {
 	private String id;
 	private ArrayList<Double> p;
 	
+	public Patient() {
+		result = "unknown";
+		prediction = "unknown";
+		id = "unknown";
+		p = new ArrayList<Double>();
+	}
+	
 	public Patient(String r, String pred, String i) {
+		this();
 		result = r;
 		prediction = pred;
 		id = i;
-		p = new ArrayList<Double>();
+	}
+	
+	public Patient(String r, String pred, String i, ArrayList<Double> proteins) {
+		this(r,pred,i);
+		p = proteins;
 	}
 
 	public String getResult() {
@@ -50,5 +62,11 @@ public class Patient {
 	public String toString() {
 		return result +" "+ prediction +" "+ id +" "+ p;
 		
+	}
+	
+	public boolean equals(Patient rhs) {
+		if((rhs.getId()).equals(this.getId())) //Compares the ids of this and rhs to test if they are equal
+			return true;
+		return false;
 	}
 }

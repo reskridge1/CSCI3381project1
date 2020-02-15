@@ -18,12 +18,10 @@ public class PatientCollection implements PatientCollectionADT{
 	}
 	
 	public Patient getPatient(String id) {
-		for(Patient patient: list) { //For each patient in the list check to see
-			if(list.contains(id)) { //if the list contains the id
-				return patient; 
-			}
-		}
-		return null; //returns null if the id is not in the collection
+		if(!list.contains(id)) //If the list does not contain the given idea then return null
+			return null;
+		return list.get(list.indexOf(id));
+		
 	}
 
 	public Patient removePatient(String id) {
