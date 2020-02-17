@@ -60,7 +60,7 @@ public class Patient {
 	}
 	
 	public String toString() {
-		return result +" "+ prediction +" "+ id +" "+ p;
+		return result +" "+ prediction +" "+ id +" "+ p.get(0) + " "+p.get(1);
 		
 	}
 	

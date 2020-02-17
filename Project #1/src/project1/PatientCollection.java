@@ -18,10 +18,11 @@ public class PatientCollection implements PatientCollectionADT{
 	}
 	
 	public Patient getPatient(String id) {
-		if(!list.contains(id)) //If the list does not contain the given idea then return null
-			return null;
-		return list.get(list.indexOf(id));
-		
+		for(Patient patient: list) { //For each patient in the list check to see if
+			if(list.contains(id)) //the list contains the id
+				return patient;
+		}
+		return null;
 	}
 
 	public Patient removePatient(String id) {
@@ -35,13 +36,21 @@ public class PatientCollection implements PatientCollectionADT{
 	}
 
 	public void setResultForPatient(String id, String result) {
-		
+		if(list.contains(id)) {
+			Patient patient = new Patient(result, "unknown", id);
+			list.add(patient);
+		}
 		
 	}
 
 	public ArrayList<String> getIds() {
+		ArrayList<String> string = new ArrayList<String>();
 		
-		return null;
+		for(int i = 0; i < list.size(); i++ ) { //
+			String id = ""+list.get(i).toString().charAt(13)+list.get(i).toString().charAt(14); //Goes through the list for the id at the given index, then converts it to a string
+			string.add(id);//then adds it to the ArrayList
+		}
+		return string;
 	}
 
 	
@@ -61,9 +70,9 @@ public class PatientCollection implements PatientCollectionADT{
 			while((line = lineReader.readLine())!=null) {
 				String[] tokens = line.split(",");
 				
-				String response = tokens[0];
-				String prediction = tokens[1];
-				String id = tokens[2];
+				String response = tokens[0]+",";
+				String prediction = tokens[1]+",";
+				String id = tokens[2]+",";
 				Patient patient = new Patient(response,prediction,id);
 				
 				String pr1 = tokens[3697];
@@ -89,10 +98,11 @@ public class PatientCollection implements PatientCollectionADT{
 				while((line = lineReader.readLine())!=null) {
 					String[] tokens = line.split(",");
 					
-					String response = tokens[0];
-					String prediction = tokens[1];
-					String id = tokens[2];
+					String response = tokens[0]+",";
+					String prediction = tokens[1]+",";
+					String id = tokens[2]+",";
 					Patient patient = new Patient(response,prediction,id);
+					
 					
 					
 					String pr1 = tokens[3697];
@@ -123,15 +133,14 @@ public class PatientCollection implements PatientCollectionADT{
 		}			
 	}
 	
-	public void writeFile() {
-		String fn = "test.csv";
-		
+	public void writeFile(String fn) {
 		try {
 			FileWriter fw = new FileWriter(fn);
 			BufferedWriter myOutfile = new BufferedWriter(fw);
 			
 			for (int i = 0; i < list.size(); i++) {
-				myOutfile.write(list.get(i).toString() + ",");
+				myOutfile.write(list.get(i).toString() +",");
+				myOutfile.newLine();
 			}
 			
 			myOutfile.flush();
