@@ -1,3 +1,4 @@
+//Reginald Eskridge
 package project1;
 
 import java.io.BufferedReader;
@@ -11,11 +12,18 @@ import java.util.ArrayList;
 
 public class PatientCollection implements PatientCollectionADT{
 	private ArrayList<Patient> list;
+	private ArrayList<String> ids;
 	
 	public PatientCollection() {
 		list = new ArrayList<Patient>();
-		readFile("./project1/data.csv");
+		ids = new ArrayList<String>();
 	}
+	
+	public PatientCollection(String fn) { //Overloaded constructor for file reader testing
+		this();
+		readFile(fn);
+	}
+	
 	
 	public Patient getPatient(String id) {
 		for(Patient patient: list) { //For each patient in the list check to see if
@@ -44,19 +52,81 @@ public class PatientCollection implements PatientCollectionADT{
 	}
 
 	public ArrayList<String> getIds() {
-		ArrayList<String> string = new ArrayList<String>();
-		
-		for(int i = 0; i < list.size(); i++ ) { //
-			String id = ""+list.get(i).toString().charAt(13)+list.get(i).toString().charAt(14); //Goes through the list for the id at the given index, then converts it to a string
-			string.add(id);//then adds it to the ArrayList
-		}
-		return string;
+		return ids; //Returns ArrayList containing ids
 	}
 
 	
 	public String addPatientsFromFile(String fileName) {
+		BufferedReader lineReader = null;
 		
-		return null;
+		try {
+			FileReader fr = new FileReader(fileName);
+			lineReader = new BufferedReader(fr);
+			String line = null;
+			
+			while((line = lineReader.readLine())!=null) {
+				String[] tokens = line.split(",");
+				
+				String id = tokens[0]+",";
+				ids.add(id);
+						
+					
+				String pr1 = tokens[3696];
+				String pr2 = tokens[3257];
+				double p1 = Double.parseDouble(pr1);
+				double p2 = Double.parseDouble(pr2);
+					
+				ArrayList<Double> proteins = new ArrayList<Double>();
+				
+				proteins.add(p1);
+				proteins.add(p2);
+					
+				String prediction = Predictor.predict(p1,p2);
+					
+				Patient patient = new Patient("unknown", prediction, id, proteins);
+				list.add(patient);
+				
+			}
+		} catch (Exception e) {
+			System.err.println("there was a problem with the file reader, try different read type.");
+			try {
+				lineReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(fileName.substring(1))));
+				String line = null;
+				while((line = lineReader.readLine())!=null) {
+					String[] tokens = line.split(",");
+					
+					String id = tokens[0]+",";
+					ids.add(id);
+						
+						
+					String pr1 = tokens[3696];
+					String pr2 = tokens[3257];
+					double p1 = Double.parseDouble(pr1);
+					double p2 = Double.parseDouble(pr2);
+						
+					ArrayList<Double> proteins = new ArrayList<Double>();
+					
+					proteins.add(p1);
+					proteins.add(p2);
+						
+						
+					String prediction = Predictor.predict(p1,p2);
+					Patient patient = new Patient("unknown", prediction, id, proteins);
+					list.add(patient);
+				
+				}			
+			} catch (Exception e2) {
+				System.err.println("there was a problem with the file reader, try again.  either no such file or format error");
+			} 
+		}finally {
+			if (lineReader != null)
+				try {
+					lineReader.close();
+				} catch (IOException e2) {
+					System.err.println("could not close BufferedReader");
+				}
+		}			
+		return list.toString();
 	}
 	
 	private void readFile(String fileName) {
@@ -151,4 +221,5 @@ public class PatientCollection implements PatientCollectionADT{
 			System.err.println("Didn't save to " + fn);
 		}
 	}
+	
 }

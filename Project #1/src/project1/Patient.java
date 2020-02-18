@@ -1,3 +1,4 @@
+//Reginald Eskridge
 package project1;
 
 import java.util.ArrayList;
@@ -15,18 +16,19 @@ public class Patient {
 		p = new ArrayList<Double>();
 	}
 	
-	public Patient(String r, String pred, String i) {
+	public Patient(String r, String pred, String i) { //Overloaded constructor sets private data members to parameters
 		this();
 		result = r;
 		prediction = pred;
 		id = i;
 	}
 	
-	public Patient(String r, String pred, String i, ArrayList<Double> proteins) {
+	public Patient(String r, String pred, String i, ArrayList<Double> proteins) { //Overloaded constructor with ArrayList for the proteins added
 		this(r,pred,i);
 		p = proteins;
 	}
 
+	//Getters and setters follow
 	public String getResult() {
 		return result;
 	}
@@ -59,8 +61,8 @@ public class Patient {
 		this.p = p;
 	}
 	
-	public String toString() {
-		return result +" "+ prediction +" "+ id +" "+ p.get(0) + " "+p.get(1);
+	public String toString() { //String representation of patient object
+		return result +" "+ prediction +" "+ id +" "+ p.get(0).toString() + " "+p.get(1).toString();
 		
 	}
 	
