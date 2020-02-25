@@ -17,20 +17,15 @@ public class PatientCollection implements PatientCollectionADT{
 	public PatientCollection() {
 		list = new ArrayList<Patient>();
 		ids = new ArrayList<String>();
+		readFile("./project1/data.csv");
 	}
-	
-	public PatientCollection(String fn) { //Overloaded constructor for file reader testing
-		this();
-		readFile(fn);
-	}
-	
 	
 	public Patient getPatient(String id) {
-		for(Patient patient: list) { //For each patient in the list check to see if
-			if(list.contains(id)) //the list contains the id
-				return patient;
-		}
-		return null;
+		int index = list.indexOf(new Patient(id));
+		if (index<0)
+			return null;
+		else
+			return list.get(index);
 	}
 
 	public Patient removePatient(String id) {

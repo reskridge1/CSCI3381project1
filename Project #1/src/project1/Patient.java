@@ -28,6 +28,12 @@ public class Patient {
 		p = proteins;
 	}
 
+	public Patient(String id) {
+		// TODO Auto-generated constructor stub
+		this();
+		this.id = id;
+	}
+
 	//Getters and setters follow
 	public String getResult() {
 		return result;
