@@ -6,41 +6,57 @@ import java.util.ArrayList;
 public class Tester {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PatientCollection ptCol = new PatientCollection();
+		PatientCollection pats = new PatientCollection ();
+		System.out.println(pats);
+
+		Patient pat1 = new Patient();
+		pat1 = pats.getPatient("1");
+		if (pat1!=null) {
+			System.out.println("patient 1:"+pat1);
+		}
+		else {
+			System.out.println("patient not found");
+		}
 		
-		String fn = "test.csv";
-		String fromFile = "./project1/data.csv";
-		//String fromFile = "./project1/newdata.csv";
-				
-		ptCol.addPatientsFromFile(fromFile);
-		ptCol.writeFile(fn);
+		pat1.setResult("resultSet");
+		pat1 = pats.getPatient("1");
+		if (pat1!=null) {
+			System.out.println("patient 1 after result reset:"+pat1);
+		}
+		else {
+			System.out.println("patient not found");
+		}
 		
-		PatientCollection ptCol2 = new PatientCollection(fromFile);
-		ptCol2.writeFile(fn);
+		System.out.println("arraylist of ids "+pats.getIds());
+		System.out.println();
+		System.out.println(pats);
 		
-		
-		String prediction = Predictor.predict(20.9,20.1); //Tests predictor
-		
-		ArrayList<Double> p = new ArrayList<Double>();
-		
-		p.add(20.9786);
-		p.add(22.0139);
-		
-		Patient pat = ptCol.getPatient("1");
-		ArrayList<String> thing = new ArrayList<String>();
-		thing = ptCol.getIds(); //Tests the getIds method
-//		pat.setId("1");
-//		pat.setP(p);
-//		pat.setResult("unknown");
-//		pat.setPred(prediction);
-		System.out.println("Test: " +pat);
-		
-		Patient patient = new Patient("unknown", prediction, "1", p);
-		
-		System.out.println(patient); //Tests toString method
+		// test removing a patient
+		Patient removed = pats.removePatient("111");
+		if (removed == null)
+			System.out.println("removed failed");
+		System.out.println("arraylist of ids after bad remove"+pats.getIds());
+		System.out.println();
+		System.out.println(pats);		
+		System.out.println();
+		removed = pats.removePatient("9");
+		if (removed != null)
+			System.out.println("removed worked");	
+		System.out.println("arraylist of ids after 9 removed"+pats.getIds());
+		System.out.println();
+		System.out.println(pats);		
+		System.out.println();		
 		
 		
+		System.out.println("adding patients from newdata");
+		System.out.println(pats.addPatientsFromFile("./project1/newdata.csv"));
+		System.out.println();
+		System.out.println(pats);		
+		
+		Patient pat30 = pats.getPatient("30");
+		System.out.println(pat30);
+		
+		pats.writeFile("./project1/data.csv");
 	}
 
 }

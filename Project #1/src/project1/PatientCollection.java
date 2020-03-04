@@ -17,7 +17,7 @@ public class PatientCollection implements PatientCollectionADT{
 	public PatientCollection() {
 		list = new ArrayList<Patient>();
 		ids = new ArrayList<String>();
-		readFile("./project1/data.csv");
+		readFile();
 	}
 	
 	public Patient getPatient(String id) {
@@ -29,21 +29,24 @@ public class PatientCollection implements PatientCollectionADT{
 	}
 
 	public Patient removePatient(String id) {
-		for (Patient patient : list) { //For each patient in the list check to see if
-			if(list.contains(id)) { //the list contains the id then remove
-				list.remove(patient);
-				return patient;
-			}
+		Patient toRemove = new Patient(id);
+		int index  = list.indexOf(toRemove);
+		if (index >= 0) {
+			Patient toReturn = list.remove(index);
+			list.remove(toRemove);
+			ids.remove(id);
+			return toReturn;
 		}
-		return null; //returns null if the id is not in the collection
+		else {
+			return null;
+		}
 	}
 
 	public void setResultForPatient(String id, String result) {
-		if(list.contains(id)) {
-			Patient patient = new Patient(result, "unknown", id);
-			list.add(patient);
+		Patient pat = getPatient(id);
+		if (pat!=null) {
+			pat.setResult(result);
 		}
-		
 	}
 
 	public ArrayList<String> getIds() {
@@ -52,85 +55,62 @@ public class PatientCollection implements PatientCollectionADT{
 
 	
 	public String addPatientsFromFile(String fileName) {
-		BufferedReader lineReader = null;
-		
-		try {
-			FileReader fr = new FileReader(fileName);
-			lineReader = new BufferedReader(fr);
-			String line = null;
-			
-			while((line = lineReader.readLine())!=null) {
-				String[] tokens = line.split(",");
-				
-				String id = tokens[0]+",";
-				ids.add(id);
-						
-					
-				String pr1 = tokens[3696];
-				String pr2 = tokens[3257];
-				double p1 = Double.parseDouble(pr1);
-				double p2 = Double.parseDouble(pr2);
-					
-				ArrayList<Double> proteins = new ArrayList<Double>();
-				
-				proteins.add(p1);
-				proteins.add(p2);
-					
-				String prediction = Predictor.predict(p1,p2);
-					
-				Patient patient = new Patient("unknown", prediction, id, proteins);
-				list.add(patient);
-				
-			}
-		} catch (Exception e) {
-			System.err.println("there was a problem with the file reader, try different read type.");
-			try {
-				lineReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(fileName.substring(1))));
-				String line = null;
-				while((line = lineReader.readLine())!=null) {
-					String[] tokens = line.split(",");
-					
-					String id = tokens[0]+",";
-					ids.add(id);
-						
-						
-					String pr1 = tokens[3696];
-					String pr2 = tokens[3257];
-					double p1 = Double.parseDouble(pr1);
-					double p2 = Double.parseDouble(pr2);
-						
-					ArrayList<Double> proteins = new ArrayList<Double>();
-					
-					proteins.add(p1);
-					proteins.add(p2);
-						
-						
-					String prediction = Predictor.predict(p1,p2);
-					Patient patient = new Patient("unknown", prediction, id, proteins);
-					list.add(patient);
-				
-				}			
-			} catch (Exception e2) {
-				System.err.println("there was a problem with the file reader, try again.  either no such file or format error");
-			} 
-		}finally {
-			if (lineReader != null)
+		// format
+				//id,protein1,protein2, ... , protein4776
+				String errors = "";
+				BufferedReader br = null;
 				try {
-					lineReader.close();
-				} catch (IOException e2) {
-					System.err.println("could not close BufferedReader");
-				}
-		}			
-		return list.toString();
+					br = new BufferedReader(new FileReader(fileName));
+					String line;
+					int lineNum = 1;
+					while ((line = br.readLine()) != null) {
+						System.out.println(line.substring(0,30));
+						String[] tokens = line.split(",");
+						int index = line.indexOf(',');
+						String values = line.substring(index+1);
+						String prediction = Predictor.predict(Double.parseDouble(tokens[3697]), Double.parseDouble(tokens[3258]));
+						
+						double p1 = Double.parseDouble(tokens[3697]);
+						double p2 = Double.parseDouble(tokens[3258]);
+						
+						ArrayList<Double> doubles = new ArrayList<Double>();
+						doubles.add(p1);
+						doubles.add(p2);
+						
+						Patient toAdd = new Patient("unknown",prediction,tokens[0],doubles);
+						if (ids.contains(tokens[0])) {
+							errors += "line # "+lineNum+" "+tokens[0]+" is not a unique identifier\n";
+						}
+						else if (tokens.length!=4777) {
+							errors += "line # "+lineNum+" not the correct number of values\n";
+						}
+						else {
+							list.add(toAdd);
+							ids.add(tokens[0]);
+							;				}
+						lineNum++;
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					try {
+						br.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}	
+				return errors;
 	}
 	
-	private void readFile(String fileName) {
+	private void readFile() {
 		BufferedReader lineReader = null;
 		
 		try {
-			FileReader fr = new FileReader(fileName);
+			FileReader fr = new FileReader("./project1/data.csv");
 			lineReader = new BufferedReader(fr);
-			String line = null;
+			String line;
 			
 			while((line = lineReader.readLine())!=null) {
 				String[] tokens = line.split(",");
@@ -138,64 +118,30 @@ public class PatientCollection implements PatientCollectionADT{
 				String response = tokens[0]+",";
 				String prediction = tokens[1]+",";
 				String id = tokens[2]+",";
-				Patient patient = new Patient(response,prediction,id);
 				
+				ArrayList<Double> proteins = new ArrayList<Double>();
 				String pr1 = tokens[3697];
 				String pr2 = tokens[3258];
 				double p1 = Double.parseDouble(pr1);
 				double p2 = Double.parseDouble(pr2);
-				
-				ArrayList<Double> proteins = new ArrayList<Double>();
-				
 				proteins.add(p1);
 				proteins.add(p2);
 				
-				patient.setP(proteins);
+				Patient patient = new Patient(response,prediction,id,proteins);
 				
 				list.add(patient);
+				ids.add(tokens[2]);
 				
 			}
-		} catch (Exception e) {
-			System.err.println("there was a problem with the file reader, try different read type.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
 			try {
-				lineReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(fileName.substring(1))));
-				String line = null;
-				while((line = lineReader.readLine())!=null) {
-					String[] tokens = line.split(",");
-					
-					String response = tokens[0]+",";
-					String prediction = tokens[1]+",";
-					String id = tokens[2]+",";
-					Patient patient = new Patient(response,prediction,id);
-					
-					
-					
-					String pr1 = tokens[3697];
-					String pr2 = tokens[3258];
-					double p1 = Double.parseDouble(pr1);
-					double p2 = Double.parseDouble(pr2);
-					
-					ArrayList<Double> proteins = new ArrayList<Double>();
-				
-					proteins.add(p1);
-					proteins.add(p2);
-					
-					patient.setP(proteins);
-					
-					list.add(patient);
-					
-				}			
-			} catch (Exception e2) {
-				System.err.println("there was a problem with the file reader, try again.  either no such file or format error");
-			} 
-		}finally {
-			if (lineReader != null)
-				try {
-					lineReader.close();
-				} catch (IOException e2) {
-					System.err.println("could not close BufferedReader");
-				}
-		}			
+				lineReader.close();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void writeFile(String fn) {
@@ -203,8 +149,8 @@ public class PatientCollection implements PatientCollectionADT{
 			FileWriter fw = new FileWriter(fn);
 			BufferedWriter myOutfile = new BufferedWriter(fw);
 			
-			for (int i = 0; i < list.size(); i++) {
-				myOutfile.write(list.get(i).toString() +",");
+			for (Patient pat: list) {
+				myOutfile.write(pat.getResult()+","+pat.getPred()+","+pat.getId()+","+pat.getP());
 				myOutfile.newLine();
 			}
 			
@@ -215,6 +161,14 @@ public class PatientCollection implements PatientCollectionADT{
 			e.printStackTrace();
 			System.err.println("Didn't save to " + fn);
 		}
+	}
+	
+	public String toString () {
+		StringBuilder sb = new StringBuilder();
+		for (Patient patient : list) {
+			sb.append(patient+"\n");
+		}
+		return sb.toString();
 	}
 	
 }
